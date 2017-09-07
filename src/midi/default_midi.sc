@@ -8,8 +8,8 @@
   ~pitchBendRange = 0.5;
 
   q != nil && q.(); // clear midi note on and off if assigned
-  nodes = Array.newClear(128);       // array has one slot per possible MIDI note
-  velocities = Array.newClear(128);  // array has one slot per possible MIDI note
+  nodes = Array.newClear(129);       // array has one slot per possible MIDI note
+  velocities = Array.newClear(129);  // array has one slot per possible MIDI note
 
   setPitchBend = { |val|
     var lowerLimit = 1 - ~pitchBendRange,
@@ -20,7 +20,7 @@
   calcAmp  =  { |velocity|  velocity * ~ampScale * ~volume };
 
   onFunc = MIDIFunc.noteOn({ |velocity, note, chan, src|
-    nodes[note] = Synth(\simple_saw, [
+    nodes[note] = Synth(~defaultSynthName, [
       \freq, calcFreq.(note),
       \amp, calcAmp.(velocity)
     ]);
@@ -49,7 +49,7 @@
         { synth.set(\amp, calcAmp.(velocities[index])) }
       );
     });
-  });
+  }, 1);
 
   q = { onFunc.free; pitchBendFunc.free; volumeFunc.free; offFunc.free; };
 )

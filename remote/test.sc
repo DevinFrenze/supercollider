@@ -1,2 +1,0 @@
-a = "HIHIHI";
-a.postln;
