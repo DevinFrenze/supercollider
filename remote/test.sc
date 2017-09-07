@@ -1,0 +1,2 @@
+a = "HIHIHI";
+a.postln;

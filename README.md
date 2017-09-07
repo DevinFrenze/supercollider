@@ -14,3 +14,7 @@
 * to use the `startup.scd` file in this directory
 ** make an alias from `Platform.userConfigDir +/+ startup.scd`
 ** it will run execute when you start sclang
+
+# TODO
+* make keyboard play globally defined synth
+* load simple synth definitions on startup
