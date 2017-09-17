@@ -1,45 +1,40 @@
 (
-  ~scale_frequency = { | min, max, degree |
-    var power_of_two = (1 / degree) - 1,
-        range = max - min;
-    min + (range / 2.pow(power_of_two));
-  };
+  var name = "simple", synth_gen, midi_controls, event;
 
-  ~carriers = Dictionary[
-    \sine   -> {| freq = 440, phase = 0 | SinOsc.ar(freq, phase) },
-    \pulse  -> {| freq = 400, width = 0.5 | Pulse.ar(freq, width) },
-    \saw    -> {| freq = 440 | Saw.ar(freq) },
-    \blip   -> {| freq = 400, numHarmonics = 200 | Blip.ar(freq, numHarmonics) }
-  ];
+  postln("start loading" + name + "synths");
 
-  ~rlpf = {| in, filter_freq = 440, rq = 1 | RLPF.ar(in, filter_freq.clip(0, 20000), rq) };
+  midi_controls = ~midi_controls.at(\amp_adsr) ++ ~midi_controls.at(\filter_freq_adsr) ++ ~midi_controls.at(\rlpf);
 
-  ~amp_adsr = {| attack = 0.0, decay = 0.0, sustain = 1, release = 0.1, curve = 'lin' |
-    Env.new([0, 1, sustain, 0], [attack, decay, release], curve, 2);
-  };
+  event = ~events.at(\amp_adsr) ++ ~events.at(\filter_freq_adsr) ++ ~events.at(\rlpf);
 
-  ~filter_adsr = {| freq = 440,
-    filter_attack = 0.02, filter_decay = 0.02, filter_sustain = 0.5, filter_release = 0.1,
-    filter_peak = 1, filter_curve = 'lin' |
-    var peak = ~scale_frequency.(freq, 20000, filter_peak),
-      sustain= ~scale_frequency.(freq, peak, filter_sustain);
-    Env.new([freq, peak, sustain, freq], [filter_attack, filter_decay, filter_release], filter_curve, 2);
-  };
+  synth_gen = { |carrier = \saw |
+    var synth_name = name ++ "_" ++ carrier,
+        carrier_event = ~events.at(carrier),
+        carrier_midi_controls = ~midi_controls.at(carrier),
+        synth_event = event.copy,
+        synth_midi_controls = midi_controls.copy;
 
-  ~stereo = { | signal, out = 0, pan = 0, amp = 1 | Out.ar(out, Pan2.ar(signal, pan, amp)) };
+    if (carrier_event != nil, { synth_event = synth_event ++ carrier_event; });
 
-  ~simple_synth_gen = { |carrier = \saw |
+    if (carrier_midi_controls != nil, { synth_midi_controls = synth_midi_controls ++ carrier_midi_controls; });
+
+    ~events.put(synth_name, synth_event);
+    ~midi_controls.put(synth_name, synth_midi_controls);
+
     SynthDef(\simple_ ++ carrier, { | gate = 1, freq = 440 |
       var frequency = freq,
           signal = SynthDef.wrap(~carriers.at(carrier), [], [frequency]),
           env = EnvGen.ar(SynthDef.wrap(~amp_adsr), gate, doneAction: 2),
-          filter_env = EnvGen.ar(SynthDef.wrap(~filter_adsr, [], [freq]), gate);
-      signal = SynthDef.wrap(~rlpf, [], [signal * env, filter_env]);
+          filter_freq_env = EnvGen.ar(SynthDef.wrap(~filter_freq_adsr, [], [freq]), gate);
+      signal = signal * env;
+      signal = SynthDef.wrap(~rlpf, [], [signal, filter_freq_env]);
       SynthDef.wrap(~stereo, [], [signal]);
     }).add;
+
+    postln("made synth def" + synth_name);
   };
 
-  ~simple_synth_gen.(\pulse); 
-  ~simple_synth_gen.(\saw); 
-  ~simple_synth_gen.(\blip); 
+  ~carriers.keys.do { |key| synth_gen.(key); };
+
+  postln("done loading" + name + "synths");
 )
