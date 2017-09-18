@@ -1,8 +1,5 @@
 (
   postln("start loading util");
-  ~scale_frequency = {| amount, start = 20, stop = 20000, n = 1 |
-    start * (stop/start).pow(amount/n);
-  };
 
   ~exponential_interp_gen = {
     | out_min = 0.01, out_max = 1, in_min = 0, in_max = 127 |
@@ -39,5 +36,6 @@
     ~current_midi_controls = ~midi_controls.at(synth_name);
     this.executeFile(Platform.userConfigDir +/+ 'src/midi/simple_midi.sc');
   };
+
   postln("done loading util");
 )
