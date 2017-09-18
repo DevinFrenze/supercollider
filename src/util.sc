@@ -1,8 +1,5 @@
 (
   postln("start loading util");
-  ~scale_frequency = {| amount, start = 20, stop = 20000, n = 1 |
-    start * (stop/start).pow(amount/n);
-  };
 
   ~exponential_interp_gen = {
     | out_min = 0.01, out_max = 1, in_min = 0, in_max = 127 |
@@ -29,15 +26,26 @@
     }
   };
 
-  ~events = Dictionary.new;
-  ~midi_controls = Dictionary.new;
+  ~load_synth = { |synth_name, save_current_event = true|
+    var previous_event = ~current_event;
 
-  ~load_synth = { |synth_name|
     postln("loading synth" + synth_name);
+
     ~current_synth = synth_name;
     ~current_event = ~events.at(synth_name);
     ~current_midi_controls = ~midi_controls.at(synth_name);
+
+    if (save_current_event && previous_event != nil, {
+      postln("HERE I AM");
+      postln(~current_event);
+      ~current_event.keysValuesChange({
+        |key, value|
+        if (previous_event.includesKey(key), previous_event.at(key), value);
+      });
+    });
+
     this.executeFile(Platform.userConfigDir +/+ 'src/midi/simple_midi.sc');
   };
+
   postln("done loading util");
 )

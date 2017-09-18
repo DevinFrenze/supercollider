@@ -11,10 +11,10 @@
   };
 
   ~midi_controls.put(\filter_freq_adsr, [
-    \filter_attack -> ~linear_interp_gen.(),
-    \filter_decay -> ~linear_interp_gen.(),
+    \filter_attack -> ~exponential_interp_gen.(),
+    \filter_decay -> ~exponential_interp_gen.(),
     \filter_sustain -> ~exponential_interp_gen.(20, 20000),
-    \filter_release -> ~linear_interp_gen.(),
+    \filter_release -> ~exponential_interp_gen.(0.01, 2),
   ]);
 
   ~events.put(\filter_freq_adsr, (

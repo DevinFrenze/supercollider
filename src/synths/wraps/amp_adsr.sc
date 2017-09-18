@@ -14,9 +14,9 @@
   ));
 
   ~midi_controls.put(\amp_adsr, [
-    \attack -> ~linear_interp_gen.(),
-    \decay -> ~linear_interp_gen.(),
+    \attack -> ~exponential_interp_gen.(),
+    \decay -> ~exponential_interp_gen.(),
     \sustain -> ~linear_interp_gen.(),
-    \release -> ~linear_interp_gen.()
+    \release -> ~exponential_interp_gen.(0.01, 2)
   ]);
 )
