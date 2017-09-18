@@ -11,10 +11,9 @@
 * `s.quit` kill the default local server
 
 # startup
-* to use the `startup.scd` file in this directory
-** make an alias from `Platform.userConfigDir +/+ startup.scd`
-** it will run execute when you start sclang
+* make an alias from `Platform.userConfigDir +/+ startup.scd`
+* make an alias from `Platform.userConfigDir +/+ src/`
+* it will run execute when you start sclang
 
 # TODO
-* make keyboard play globally defined synth
-* load simple synth definitions on startup
+* use keyboard to control event params in a pattern
