@@ -36,7 +36,6 @@
     ~current_midi_controls = ~midi_controls.at(synth_name);
 
     if (save_current_event && previous_event != nil, {
-      postln("HERE I AM");
       postln(~current_event);
       ~current_event.keysValuesChange({
         |key, value|

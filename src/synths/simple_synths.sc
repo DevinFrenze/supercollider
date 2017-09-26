@@ -9,19 +9,18 @@
 
   synth_gen = { |carrier = \saw |
     var synth_name = name ++ "_" ++ carrier,
-        carrier_event = ~events.at(carrier),
-        carrier_midi_controls = ~midi_controls.at(carrier),
+        carrier_event = ~events.at(\carriers).at(carrier),
+        carrier_midi_controls = ~midi_controls.at(\carriers).at(carrier),
         synth_event = event.copy,
         synth_midi_controls = midi_controls.copy;
 
-    if (carrier_event != nil, { synth_event = synth_event ++ carrier_event; });
-
-    if (carrier_midi_controls != nil, { synth_midi_controls = synth_midi_controls ++ carrier_midi_controls; });
+    synth_event = synth_event ++ carrier_event;
+    synth_midi_controls = synth_midi_controls ++ carrier_midi_controls;
 
     ~events.put(synth_name, synth_event);
     ~midi_controls.put(synth_name, synth_midi_controls);
 
-    SynthDef(\simple_ ++ carrier, { | gate = 1, freq = 440 |
+    SynthDef(synth_name, { | gate = 1, freq = 440 |
       var frequency = freq,
           signal = SynthDef.wrap(~carriers.at(carrier), [], [frequency]),
           env = EnvGen.ar(SynthDef.wrap(~amp_adsr), gate, doneAction: 2),

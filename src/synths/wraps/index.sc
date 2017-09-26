@@ -5,6 +5,8 @@
   this.executeFile(path ++ 'amp_adsr.sc');
   this.executeFile(path ++ 'rlpf.sc');
   this.executeFile(path ++ 'filter_freq_adsr.sc');
+  this.executeFile(path ++ 'modulators.sc');
+  this.executeFile(path ++ 'fm.sc');
 
   ~stereo = { | signal, out = 0, pan = 0, amp = 1 |
     Out.ar(out, Pan2.ar(signal, pan, amp))
