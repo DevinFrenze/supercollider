@@ -17,3 +17,7 @@
 
 # TODO
 * use keyboard to control event params in a pattern
+* page through available controls so that there can be more controls than knobs
+* smooth out transitions between knobs and params (slide into new value)
+* add percussion synths
+* figure out why it takes two attempts for a clean start
